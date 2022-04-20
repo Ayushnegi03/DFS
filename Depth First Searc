@@ -1,0 +1,62 @@
+//Depth First Search in Javascript
+class Graph
+{         
+    constructor(v)
+    {
+        this.V = v;
+        this.adj = new Array(v);
+        for(let i = 0; i < v; i++)
+            this.adj[i] = [];
+    }
+
+    AddEdge(v, w)
+    {         
+        this.adj[v].push(w);
+    }
+
+    DFSUtil(v, visit)
+    {
+
+        visit[v] = true;
+        console.log(v + " "); 
+        for(let i of this.adj[v].values())
+        {
+            let n = i
+            if (!visit[n])
+                this.DFSUtil(n, visit);
+        }
+    }
+
+    DFS(v)
+    {
+
+        let visit = new Array(this.V);
+        for(let i = 0; i < this.V; i++)
+            visit[i] = false;
+
+        this.DFSUtil(v, visit);
+    }
+}
+
+g = new Graph(4);
+  
+g.addEdge(0, 1);
+g.addEdge(0, 2);
+g.addEdge(1, 2);
+g.addEdge(1, 3);
+g.addEdge(2, 0);
+g.addEdge(2, 3);
+g.addEdge(3, 2);
+g.addEdge(3, 3);
+ 
+console.log("Following graph in Depth First Traversal ");
+console.log( "Starting from vertex 3");
+ 
+g.DFS(3);
+//Output-
+//Following graph in Depth First Traversal 
+//Starting from vertex 3
+//3
+//2
+//0
+//1
