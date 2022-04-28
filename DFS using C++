@@ -1,0 +1,216 @@
+//Depth First Search
+#include <iostream>
+using namespace std;
+class Node
+{
+	public:
+		int id;
+	Node *NEXT;
+	Node(int id)
+	{
+		this->id = id;
+		this->NEXT = nullptr;
+	}
+};
+class Vertices
+{
+	public: int DATA;
+	Node *NEXT;
+	Node *LAST;
+	Vertices(int DATA)
+	{
+		this->DATA = DATA;
+		this->NEXT = nullptr;
+		this->LAST = nullptr;
+	}
+	Vertices()
+	{
+		Vertices(0);
+	}
+};
+class StackNode
+{
+	public:
+	Node *element;
+	StackNode *NEXT;
+	StackNode(Node *element, StackNode *NEXT)
+	{
+		this->element = element;
+		this->NEXT = NEXT;
+	}
+};
+class MyStack
+{
+	public: StackNode *top;
+	int SIZE;
+	MyStack()
+	{
+		this->top = nullptr;
+		this->SIZE = 0;
+	}
+	void push(Node *element)
+	{
+		this->top = new StackNode(element, this->top);
+		this->SIZE++;
+	}
+	bool isEmpty()
+	{
+		if (this->SIZE > 0)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	void pop()
+	{
+		if (this->SIZE > 0)
+		{
+			this->top = this->top->NEXT;
+			this->SIZE--;
+		}
+	}
+	Node *peek()
+	{
+		return this->top->element;
+	}
+};
+class Graph
+{
+	public:
+	int SIZE;
+	Vertices *node;
+	Graph(int SIZE)
+	{
+		this->SIZE = SIZE;
+		this->node = new Vertices[SIZE];
+		this->setData();
+	}
+	void setData()
+	{
+		if (this->SIZE <= 0)
+		{
+			cout << "\nEmpty Graph" << endl;
+		}
+		else
+		{
+			for (int index = 0; index < this->SIZE; index++)
+			{
+				this->node[index].DATA = index;
+			}
+		}
+	}
+	void connect(int start, int LAST)
+	{
+		Node *edge = new Node(LAST);
+		if (this->node[start].NEXT == nullptr)
+		{
+			this->node[start].NEXT = edge;
+		}
+		else
+		{
+			this->node[start].LAST->NEXT = edge;
+		}
+		this->node[start].LAST = edge;
+	}
+	void addEdge(int start, int last)
+	{
+		if (start >= 0 && start < this->SIZE && 
+            last >= 0 && last < this->SIZE)
+		{
+			this->connect(start, last);
+		}
+		else
+		{
+			cout << "\nHere is Something Wrong" << endl;
+		}
+	}
+	void printGraph()
+	{
+		if (this->SIZE > 0)
+		{
+			for (int index = 0; index < this->SIZE; ++index)
+			{
+				cout << "\nAdjacent list of vertex " 
+                     << index << " :";
+				Node *edge = this->node[index].NEXT;
+				while (edge != nullptr)
+				{
+					cout << "  " << this->node[edge->id].DATA;
+					edge = edge->NEXT;
+				}
+			}
+		}
+	}
+	void dfs(int point)
+	{
+		if (point < 0 || 
+            point >= this->SIZE || 
+            this->SIZE <= 0)
+		{
+			return;
+		}
+		Node *temp = this->node[point].NEXT;
+		cout << "\nResult :  " << point;
+		if (temp == nullptr)
+		{
+			return;
+		}
+		MyStack *s = new MyStack();
+		int move = point;
+		s->push(temp);
+		bool visit[this->SIZE];
+		for (int i = 0; i < this->SIZE; i++)
+		{
+			visit[i] = false;
+		}
+		visit[move] = true;
+		while (s->isEmpty() == false)
+		{
+			move = s->peek()->id;
+			if (visit[move] == false)
+			{
+				visit[move] = true;
+				cout << "  " << move;
+				temp = this->node[move].NEXT;
+			}
+			else
+			{
+				temp = s->peek()->NEXT;
+				s->pop();
+			}
+			if (temp != nullptr)
+			{
+				s->push(temp);
+			}
+		}
+	}
+};
+int main()
+{
+    cout<<"Here is a Deepth First Search:";
+	Graph *g = new Graph(6);
+	g->addEdge(0, 1);
+	g->addEdge(0, 5);
+	g->addEdge(1, 1);
+	g->addEdge(2, 1);
+	g->addEdge(3, 0);
+	g->addEdge(3, 3);
+	g->addEdge(4, 2);
+	g->addEdge(4, 3);
+	g->addEdge(5, 1);
+	g->printGraph();
+	g->dfs(4);
+	return 0;
+}
+//Output-
+//Here is a Deepth First Search:
+//Adjacent list of vertex 0 :  1  5
+//Adjacent list of vertex 1 :  1
+//Adjacent list of vertex 2 :  1
+//Adjacent list of vertex 3 :  0  3
+//Adjacent list of vertex 4 :  2  3
+//Adjacent list of vertex 5 :  1
+//Result :  4  2  1  3  0  5
